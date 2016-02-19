@@ -1,0 +1,44 @@
+<form action="{{ env.module.get_module_path() }}?action=create_step3" method="post">
+	<div class="panel panel-default">
+		<div class="panel-heading">{% trans "Basket" %}</div>
+		<div class="panel-body">
+
+			{% for item in env['session']['skeleton-package-stock']['po']['items'] %}
+				{% if loop.first %}
+					<table class="table table-alternate table-hover">
+					<thead>
+						<tr>
+							<th>{% trans "Name" %}</th>
+							<th>{% trans "Price" %}</th>
+							<th>{% trans "Amount" %}</th>
+							<th>{% trans "Total price" %}</th>
+							<th>&nbsp;</th>
+						</tr>
+					</thead>
+					<tbody>
+				{% endif %}
+
+				<tr data-classname="{{ item.object_classname }}" data-id="{{ item.object_id	 }}">
+					<td>{{ item.name }}</td>
+					<td>&euro;{{ item.price }}</td>
+					<td>{{ item.count }}</td>
+					<td>&euro;{{ item.price*item.count }}</td>
+					<td>
+						<a href="#" onclick="remove_from_basket(this);">
+							<span class="glyphicon glyphicon-remove"></span>
+						</a>
+					</td>
+				</tr>
+
+				{% if loop.last %}
+					</tbody>
+					</table>
+				{% endif %}
+			{% endfor %}
+
+			<div class="pull-right">
+				<button type="submit" class="btn btn-success">{% trans "Create PO" %}</button>
+			</div>
+		</div>
+	</div>
+</form>

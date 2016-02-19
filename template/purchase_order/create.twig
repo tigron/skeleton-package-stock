@@ -1,0 +1,28 @@
+<ul class="breadcrumb">
+	<li><a href="/">{% trans "Root" %}</a></li>
+	<li><a href="{{ env.module.get_module_path() }}">{% if object_name is defined %}{{ object_name }}{% else %}{{ pager.get_classname() }}{% endif %}</a></li>
+	<li class="active">{% trans "Create" %} {% if object_name is defined %}{{ object_name }}{% else %}{{ pager.get_classname() }}{% endif %}</li>
+</ul>
+
+<form action="{{ env.module.get_module_path }}?action=create_step2" method="post" class="form-horizontal">
+<div class="panel panel-default">
+	<div class="panel-heading">{% trans "Choose supplier" %}</div>
+	<div class="panel-body">
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "Supplier" %}</label>
+			<div class="col-xs-9">
+				<select name="supplier_id" class="form-control">
+					{% for supplier in suppliers %}
+						<option value="{{ supplier.id }}">{{ supplier.company }}</option>
+					{% endfor %}
+				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-xs-9 col-xs-offset-3">
+				<button type="submit" class="btn btn-primary">{% trans "Next" %}</button>
+			</div>
+		</div>
+	</div>
+</div>
+</form>

@@ -1,0 +1,168 @@
+<ul class="breadcrumb">
+	<li><a href="/">{% trans "Root" %}</a></li>
+	<li><a href="{{ env.module.get_module_path() }}">{% if object_name is defined %}{{ object_name }}{% else %}{{ pager.get_classname() }}{% endif %}</a></li>
+	<li class="active">{% trans "Edit" %} {% if object_name is defined %}{{ object_name }}{% else %}{{ pager.get_classname() }}{% endif %}</li>
+</ul>
+
+{% if purchase_order.canceled %}
+	<div class="alert alert-warning">
+		{% trans "This purchase order is canceled" %}
+	</div>
+{% endif %}
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		{% trans "Purchase order details" %}
+
+		<div class="dropdown pull-right">
+			<a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="fa fa-caret-down"></span> {% trans "Actions" %}</a>
+			<ul class="dropdown-menu">
+				{% if purchase_order.canceled %}
+					<li>
+						<a href="{{ env.module.get_module_path() }}?action=uncancel&id={{ object.id }}" data-confirm-title="{% trans "Confirmation" %}" data-confirm-message="{% trans "Are you sure you want to uncancel this purchase order" %}?">
+							<span class="glyphicon glyphicon-refresh"></span> {% trans "Undo cancellation" %}
+						</a>
+					</li>
+				{% else %}
+					<li>
+						<a href="{{ env.module.get_module_path() }}?action=cancel&id={{ object.id }}" data-confirm-title="{% trans "Confirmation" %}" data-confirm-message="{% trans "Are you sure you want to cancel this purchase order" %}?">
+							<span class="glyphicon glyphicon-remove"></span> {% trans "Cancel" %}
+						</a>
+					</li>
+				{% endif %}
+
+				<li>
+					<a href="#" data-toggle="modal" data-target="#change_comments">
+						<i class="fa fa-pencil"></i> {% trans "Change comments" %}
+					</a>
+				</li>
+
+			</ul>
+		</div>
+	</div>
+	<div class="panel-body">
+		{% if sticky_message == 'object' %}
+			<div class="alert alert-success">
+				{% trans "Purchase order updated." %}
+			</div>
+		{% endif %}
+
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "Created" %}</label>
+			<div class="col-xs-9"><p clas="form-control-static">{{ object.created|datetime }}</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "PO number" %}</label>
+			<div class="col-xs-9"><p clas="form-control-static">PO{{ object.id }}</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "Price" %}</label>
+			<div class="col-xs-9"><p clas="form-control-static">&euro;{{ object.get_price() }}</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "Delivered" %}</label>
+			<div class="col-xs-9">
+				<p class="form-control-static">
+					{% if object.delivered %}
+						<span class="label label-success">{% trans "Yes" %}</span>
+					{% else %}
+						<span class="label label-danger">{% trans "No" %}</span>
+					{% endif %}
+				</p>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "PDF" %}</label>
+			<div class="col-xs-9">
+				<p class="form-control-static">
+					<i class="fa fa-file-pdf-o"></i>
+					<a href="/object/purchase/order?action=download_pdf&id={{ object.id }}">{% trans "Download" %}</a>
+				</p>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "Comments" %}</label>
+			<div class="col-xs-9">
+				<p class="form-control-static">{{ object.comments|nl2br }}</p>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="change_comments" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<form action="{{ env.module.get_module_path() }}?id={{ object.id }}&action=change_comments" method="post" class="form-horizontal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">{% trans "Change comments" %}</h4>
+			</div>
+			<div class="modal-body">
+
+				<div class="form-group">
+					<label class="col-xs-3 control-label">{% trans "Comments" %}</label>
+					<div class="col-xs-9">
+						<textarea name="object[comments]" class="form-control autogrow">{{ object.comments }}</textarea>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+				<button type="submit" class="btn btn-primary">{% trans "Save" %}</button>
+			</div>
+		</div>
+	</div>
+	</form>
+</div>
+
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		{% trans "Purchase order overview" %}
+		{% if not object.delivered %}
+		<div class="pull-right">
+			<a href="javascript:void(0);" data-toggle="modal" data-target="#add_delivery">
+				<span class="glyphicon glyphicon-plus-sign"></span> {% trans "Add delivery" %}
+			</a>
+		</div>
+		{% endif %}
+	</div>
+	<div class="panel-body">
+		<table class="table table-alternate table-hover">
+		<thead>
+			<tr>
+				<th>{% trans "Product type" %}</th>
+				<th>{% trans "Delivered" %}</th>
+				<th>{% trans "Awaiting delivery" %}</th>
+				<th>{% trans "Ordered" %}</th>
+				<th>{% trans "Price" %}</th>
+				<th>{% trans "Total" %}</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for item in object.get_purchase_order_items() %}
+			<tr>
+				<td>
+					{{ item.get_stock_object().get_name() }}
+				</td>
+				<td>{{ item.delivered }}</td>
+				<td>{{ item.amount-item.delivered }}</td>
+				<td>{{ item.amount }}</td>
+				<td>&euro;{{ item.price }}</td>
+				<td>&euro;{{ item.price*item.count }}</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+		</table>
+	</div>
+</div>
+
+
+{% include "@skeleton-package-stock/purchase_order/modal.delivery.twig" with {"id": "add_delivery", "modal_size": "lg" } %}

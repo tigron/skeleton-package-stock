@@ -1,0 +1,74 @@
+{% block content %}
+	{% embed "@skeleton-package-crud/content.twig" with {'object_name' : 'Supplier'|trans}%}
+		{% block form_edit %}
+			<div class="form-group">
+				<label class="col-xs-3 control-label">{% trans "Company" %}</label>
+				<div class="col-xs-9">
+					<input type="text" name="object[company]" value="{{ object.company }}" class="form-control">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-xs-3 control-label">{% trans "Street" %}</label>
+				<div class="col-xs-9">
+					<input type="text" name="object[street]" value="{{ object.street }}" class="form-control">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-xs-3 control-label">{% trans "Housenumber" %}</label>
+				<div class="col-xs-9">
+					<input type="text" name="object[housenumber]" value="{{ object.housenumber }}" class="form-control">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-xs-3 control-label">{% trans "Zip" %}</label>
+				<div class="col-xs-9">
+					<input type="text" name="object[zip]" value="{{ object.zip }}" class="form-control">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-xs-3 control-label">{% trans "City" %}</label>
+				<div class="col-xs-9">
+					<input type="text" name="object[city]" value="{{ object.city }}" class="form-control">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-xs-3 control-label">{% trans "Phone" %}</label>
+				<div class="col-xs-9">
+					<input type="text" name="object[phone]" value="{{ object.phone }}" class="form-control">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-xs-3 control-label">{% trans "Fax" %}</label>
+				<div class="col-xs-9">
+					<input type="text" name="object[fax]" value="{{ object.fax }}" class="form-control">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-xs-3 control-label">{% trans "Email" %}</label>
+				<div class="col-xs-9">
+					<input type="text" name="object[email]" value="{{ object.email }}" class="form-control">
+				</div>
+			</div>
+		{% endblock form_edit %}
+
+		{% block pager_table_head %}
+			<th>{{ pager.create_header('ID'|trans, 'id')|raw }}</th>
+			<th>{{ pager.create_header('Company'|trans, 'company')|raw }}</th>
+			<th>{{ pager.create_header('Email'|trans, 'email')|raw }}</th>
+		{% endblock pager_table_head %}
+
+		{% block pager_table_row %}
+			<td>{{ object.id }}</td>
+			<td>{{ object.company }}</td>
+			<td>{{ object.email }}</td>
+		{% endblock pager_table_row %}
+	{% endembed %}
+
+{% endblock content %}

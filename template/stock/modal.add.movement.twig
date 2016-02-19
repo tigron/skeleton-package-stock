@@ -1,0 +1,58 @@
+{% extends "_default/modal.base.twig" %}
+
+{% block header %}{% trans "Modify stock" %}{% endblock header %}
+
+{% block body %}
+	<div class="alert alert-info">{% trans "Enter your stock movement." %}</div>
+
+	<form class="form-horizontal" method="post" action="{{ env.module.get_module_path() }}?action=add_movement&id={{ object.id }}" id="frm_movement">
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "Current stock" %}</label>
+			<div class="col-xs-9"><p clas="form-control form-control-static">{{ object.stock }}</p></div>
+		</div>
+
+		<div class="form-group">
+			<label class="control-label col-xs-3" for="name">{% trans "Movement" %}</label>
+			<div class="col-xs-9">
+				<input type="number" min="{{ object.stock*-1 }}" value="0" name="stock_movement[movement]" id="name" class="form-control" onchange="new_stock(this);" />
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "New stock" %}</label>
+			<div class="col-xs-9"><p class="form-control-static" id="new_stock">{{ object.stock }}</p></div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "Comment" %}</label>
+			<div class="col-xs-9"><input type="text" class="form-control" name="stock_movement[comment]" /></div>
+		</div>
+
+	</form>
+
+	<script type="text/javascript">
+		function new_stock(element) {
+			$('#new_stock').html( parseInt($(element).val()) + {{ object.stock }})
+		}
+
+		$('#frm_movement').on('submit', function(event) {
+			event.preventDefault();
+			value = parseInt($("input[name='stock_movement[movement]']").val());
+			min = parseInt($("input[name='stock_movement[movement]']").attr('min'));
+
+			if (value < min) {
+				$("input[name='stock_movement[movement]']").parents('.form-group').addClass('has-error');
+			} else {
+				$('#frm_movement').unbind('submit').submit();
+			}
+		});
+
+	</script>
+
+
+{% endblock body %}
+
+{% block footer %}
+	<button type="submit" class="btn btn-primary" onclick="$(this).parents('.modal-content').find('form').submit();">{% trans "Save" %}</button>
+	<button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Cancel" %}</button>
+{% endblock footer %}

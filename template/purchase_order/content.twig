@@ -1,0 +1,16 @@
+{% block content %}
+	{% embed "@skeleton-package-crud/content.twig" with {'object_name' : 'Purchase Order'|trans}%}
+		{% block page_edit %}
+			{% include "@skeleton-package-stock/purchase_order/edit.twig" %}
+		{% endblock page_edit %}
+
+		{% block page_create %}
+			{% include "@skeleton-package-stock/purchase_order/create.twig" %}
+		{% endblock page_create %}
+
+		{% block page %}
+			{% include "@skeleton-package-stock/purchase_order/page.twig" %}
+		{% endblock page %}
+	{% endembed %}
+
+{% endblock content %}

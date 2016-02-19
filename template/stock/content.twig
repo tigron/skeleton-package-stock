@@ -1,0 +1,100 @@
+{% block content %}
+	{% embed "@skeleton-package-crud/content.twig" %}
+
+		{% block page_edit %}
+
+			<ol class="breadcrumb">
+				<li><a href="/">{% trans "Root" %}</a></li>
+				<li><a href="{{ env.module.get_module_path() }}">{% trans "Stock" %}</a></li>
+				<li class="active">{% trans "Edit stock" %} {{ object.get_name() }}</li>
+			</ol>
+
+			{% if env.sticky_session.updated %}
+				<div class="alert alert-success">
+					{% trans "The stock settings were updated successfully." %}
+				</div>
+			{% endif %}
+
+			<form action="{{ env.module.get_module_path() }}?action=edit&id={{ object.id }}" method="post" class="form-horizontal">
+
+			<div class="panel panel-default">
+				<div class="panel-heading">{% trans "Stock properties" %}</div>
+				<div class="panel-body">
+					<div class="form-group">
+						<label class="col-xs-3 control-label">{% trans "Supplier" %}</label>
+						<div class="col-xs-9">
+							<select name="product_supplier_id" class="form-control">
+								<option value="-1">{% trans "No supplier" %}</option>
+								{% for supplier in suppliers %}
+									<option value="{{ supplier.id }}" {% if supplier.id == product_supplier.id %}selected{% endif %}>{{ supplier.company }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-xs-9 col-xs-offset-3">
+							<button type="submit" class="btn btn-primary">{% trans "Save" %}</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			</form>
+
+			{% include '@skeleton-package-stock/stock/modal.add.movement.twig' with { id: 'add-movement' } %}
+
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					{% trans "Movements" %}
+					<div class="pull-right">
+						<a href="#add-movement" data-toggle="modal">
+							<span class="glyphicon glyphicon-plus"></span>
+							{% trans "Add movement" %}
+						</a>
+					</div>
+				</div>
+				<div class="panel-body">
+					<table class="table table-condensed">
+						<thead>
+							<tr>
+								<th>{% trans "Date" %}</th>
+								<th>{% trans "Movement" %}</th>
+								<th>{% trans "Stock" %}</th>
+								<th>{% trans "Trigger" %}</th>
+								<th>{% trans "Comment" %}</th>
+							</tr>
+						</thead>
+						<tbody>
+						{% for item in pager.items %}
+				    		<tr>
+								<td>{{ item.created|datetime }}</td>
+								<td>{{ item.movement }}</td>
+								<td>{{ item.total }}</td>
+								<td>
+									{% block trigger_object %}
+										{{ item.trigger_object_classname|raw }} {{ item.trigger_object_id }}
+									{% endblock trigger_object %}
+								</td>
+								<td>{{ item.comment }}</td>
+							</tr>
+						{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		{% endblock page_edit %}
+
+		{% block pager_table_head %}
+			<th>{{ pager.create_header('ID'|trans, 'id')|raw }}</th>
+			<th>{% trans "Product" %}</th>
+			<th>{% trans "Stock" %}</th>
+		{% endblock pager_table_head %}
+
+		{% block pager_table_row %}
+			<td>{{ object.id }}</td>
+			<td>{{ object.get_name() }}</td>
+			<td>{{ object.stock }}</td>
+		{% endblock pager_table_row %}
+	{% endembed %}
+{% endblock content %}
