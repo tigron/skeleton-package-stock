@@ -36,12 +36,11 @@ class Stock extends Crud {
 	public function display() {
 		parent::display();
 
-
 		/**
 		 * Initialize the template object
 		 */
 		$template = Template::Get();
-		$pager = $this->
+		$pager = $this->get_pager();
 
 	}
 
@@ -70,6 +69,16 @@ class Stock extends Crud {
 
 		$supplier = \Skeleton\Package\Stock\Supplier::get_for_object($product);
 		$template->assign('product_supplier', $supplier);
+
+		try {
+			$stock = \Skeleton\Package\Stock\Stock::get_last_by_object($product);
+			$template->assign('stock', $stock->total);
+		} catch (\Exception $e) {
+			$template->assign('stock', 0);
+		}
+		$backorder = \Skeleton\Package\Stock\Purchase\Order\Item::count_backorder($product);
+		$template->assign('backorder', $backorder);
+
 
 		$pager = new Pager('\Skeleton\Package\Stock\Stock');
 		$pager->add_sort_permission('created');

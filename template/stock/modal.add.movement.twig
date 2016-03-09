@@ -8,7 +8,7 @@
 	<form class="form-horizontal" method="post" action="{{ env.module.get_module_path() }}?action=add_movement&id={{ object.id }}" id="frm_movement">
 		<div class="form-group">
 			<label class="col-xs-3 control-label">{% trans "Current stock" %}</label>
-			<div class="col-xs-9"><p clas="form-control form-control-static">{{ object.stock }}</p></div>
+			<div class="col-xs-9"><p class="form-control-static">{{ stock.total }}</p></div>
 		</div>
 
 		<div class="form-group">
@@ -20,14 +20,13 @@
 
 		<div class="form-group">
 			<label class="col-xs-3 control-label">{% trans "New stock" %}</label>
-			<div class="col-xs-9"><p class="form-control-static" id="new_stock">{{ object.stock }}</p></div>
+			<div class="col-xs-9"><p class="form-control-static" id="new_stock">{{ stock.total }}</p></div>
 		</div>
 
 		<div class="form-group">
 			<label class="col-xs-3 control-label">{% trans "Comment" %}</label>
 			<div class="col-xs-9"><input type="text" class="form-control" name="stock_movement[comment]" /></div>
 		</div>
-
 	</form>
 
 	<script type="text/javascript">
@@ -46,7 +45,6 @@
 				$('#frm_movement').unbind('submit').submit();
 			}
 		});
-
 	</script>
 
 

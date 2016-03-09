@@ -39,6 +39,16 @@ class Order {
 	}
 
 	/**
+	 * get supplier
+	 *
+	 * @access public
+	 * @return \Skeleton\Package\Stock\Supplier $supplier
+	 */
+	public function get_supplier() {
+		return \Skeleton\Package\Stock\Supplier::get_by_id($this->supplier_id);
+	}
+
+	/**
 	 * Check delivered
 	 *
 	 * @access public

@@ -52,19 +52,33 @@ class Order extends Crud {
 	 * @access public
 	 */
 	public function display_create_step2() {
-		if (!isset($_POST['supplier_id'])) {
+		if (!isset($_POST['supplier_id']) AND !isset($_SESSION['skeleton-package-stock']['po']['supplier_id'])) {
 			Session::redirect($this->get_module_path() . '?action=create');
 		}
 
 		if (!isset($_SESSION['skeleton-package-stock']['po'])) {
 			$_SESSION['skeleton-package-stock']['po'] = [];
 		}
-		$_SESSION['skeleton-package-stock']['po']['supplier_id'] = $_POST['supplier_id'];
+		if (isset($_POST['supplier_id'])) {
+			$_SESSION['skeleton-package-stock']['po']['supplier_id'] = $_POST['supplier_id'];
+			unset($_SESSION['skeleton-package-stock']['po']['items']);
+			$supplier = Supplier::get_by_id($_SESSION['skeleton-package-stock']['po']['supplier_id']);
+			$purchase_list = $supplier->get_purchase_list();
+
+			foreach ($purchase_list as $item) {
+				$this->add_to_basket($item, 1, $item->get_purchase_price());
+			}
+		}
 
 		$template = Template::get();
+
+		$supplier = Supplier::get_by_id($_SESSION['skeleton-package-stock']['po']['supplier_id']);
+		$template->assign('supplier', $supplier);
+
 		$classname = \Skeleton\Package\Stock\Config::$object_stock_interface;
 		$pager = new Pager($classname);
 		$pager->add_join('object_supplier', 'object_id', $classname::trait_get_database_table() . '.id');
+		$pager->add_condition('object_supplier.supplier_id', $supplier->id);
 		$pager->add_condition('object_supplier.object_classname', $classname);
 
 		$fields = $classname::get_object_fields();
@@ -85,8 +99,7 @@ class Order extends Crud {
 		$pager->page();
 		$template->assign('pager', $pager);
 
-		$supplier = Supplier::get_by_id($_POST['supplier_id']);
-		$template->assign('supplier', $supplier);
+
 	}
 
 	/**
@@ -152,23 +165,36 @@ class Order extends Crud {
 	 * @access public
 	 */
 	public function display_add_to_basket() {
+		$classname = $_POST['object_classname'];
+		$class = $classname::get_by_id( $_POST['object_id'] );
+		$this->add_to_basket($class, $_POST['count'], $_POST['price']);
+	}
+
+	/**
+	 * Add a product to a basket
+	 *
+	 * @access private
+	 * @param Product $product
+	 * @param int $count
+	 */
+	public function add_to_basket(\Skeleton\Package\Stock\Object $object, $count, $price) {
+
 		if (!isset($_SESSION['skeleton-package-stock']['po']['items'])) {
 			$_SESSION['skeleton-package-stock']['po']['items'] = [];
 		}
-		$classname = $_POST['object_classname'];
-		if (!isset($_SESSION['skeleton-package-stock']['po']['items'][ $_POST['object_classname'] . '_' . $_POST['object_id']])) {
-			$_SESSION['skeleton-package-stock']['po']['items'][ $_POST['object_classname'] . '_' . $_POST['object_id']] = [
-				'price' => $_POST['price'],
+		$classname = get_class($object);
+		if (!isset($_SESSION['skeleton-package-stock']['po']['items'][ $classname . '_' . $object->id ])) {
+			$_SESSION['skeleton-package-stock']['po']['items'][ $classname . '_' . $object->id ] = [
+				'price' => $price,
 				'count' => 0,
-				'name' => $classname::get_by_id($_POST['object_id'])->get_name(),
-				'object_classname' => $_POST['object_classname'],
-				'object_id' => $_POST['object_id'],
+				'name' => $object->get_name(),
+				'object_classname' => $classname,
+				'object_id' => $object->id,
 			];
 		}
 
-		$_SESSION['skeleton-package-stock']['po']['items'][$_POST['object_classname'] . '_' . $_POST['object_id']]['count'] += $_POST['count'];
-		$_SESSION['skeleton-package-stock']['po']['items'][$_POST['object_classname'] . '_' . $_POST['object_id']]['price'] = $_POST['price'];
-		$this->template = false;
+		$_SESSION['skeleton-package-stock']['po']['items'][$classname . '_' . $object->id]['count'] += $count;
+		$_SESSION['skeleton-package-stock']['po']['items'][$classname . '_' . $object->id]['price'] = $price;
 	}
 
 	/**

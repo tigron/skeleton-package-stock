@@ -26,7 +26,11 @@ class Stock {
 	];
 
 	/**
+	 * __Get
 	 *
+	 * @access public
+	 * @param string $key
+	 * @return mixed $value
 	 */
 	public function __get($key) {
 		if ($key == 'trigger_object') {
@@ -38,7 +42,11 @@ class Stock {
 	}
 
 	/**
+	 * __isset
 	 *
+	 * @access public
+	 * @param string $key
+	 * @return bool $isset
 	 */
 	public function __isset($key) {
 		if ($key == 'trigger_object') {
@@ -46,6 +54,18 @@ class Stock {
 		}
 
 		return $this->trait_isset($key);
+	}
+
+	/**
+	 * count backorder
+	 *
+	 * @access public
+	 * @return int $backorder
+	 */
+	public function count_backorder() {
+		$classname = $this->stock_object_classname;
+		$object = $classname::get_by_id($this->stock_object_id);
+		return \Skeleton\Package\Stock\Purchase\Order\Item::count_backorder($object);
 	}
 
 	/**
@@ -100,7 +120,7 @@ class Stock {
 	 */
 	public static function get_last_by_object(\Skeleton\Package\Stock\Object $object) {
 		$db = Database::get();
-		$id = $db->get_one('SELECT id FROM product_stock WHERE trigger_object_classname=? AND trigger_object_id=? ORDER BY created DESC', [ get_class($object), $object->id ]);
+		$id = $db->get_one('SELECT id FROM product_stock WHERE stock_object_classname=? AND stock_object_id=? ORDER BY created DESC LIMIT 1', [ get_class($object), $object->id ]);
 		if ($id === null) {
 			throw new \Exception('No product_stock found');
 		}

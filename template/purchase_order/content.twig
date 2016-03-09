@@ -1,16 +1,36 @@
-{% block content %}
-	{% embed "@skeleton-package-crud/content.twig" with {'object_name' : 'Purchase Order'|trans}%}
-		{% block page_edit %}
-			{% include "@skeleton-package-stock/purchase_order/edit.twig" %}
-		{% endblock page_edit %}
+{% extends "@skeleton-package-crud/content.twig" %}
 
-		{% block page_create %}
-			{% include "@skeleton-package-stock/purchase_order/create.twig" %}
-		{% endblock page_create %}
+{% set object_name = 'Purchase Order'|trans %}
 
-		{% block page %}
-			{% include "@skeleton-package-stock/purchase_order/page.twig" %}
-		{% endblock page %}
-	{% endembed %}
+{% block page_edit %}
+	{% include "@skeleton-package-stock/purchase_order/edit.twig" %}
+{% endblock page_edit %}
 
-{% endblock content %}
+{% block page_create %}
+	{% include "@skeleton-package-stock/purchase_order/create.twig" %}
+{% endblock page_create %}
+
+{% block page %}
+	{% include "@skeleton-package-stock/purchase_order/page.twig" %}
+{% endblock page %}
+
+
+{% block pager_table_head %}
+	<th>{{ pager.create_header('id', 'Id'|trans)|raw }}</th>
+	<th>{{ pager.create_header('created', 'Created'|trans)|raw }}</th>
+	<th>{{ pager.create_header('supplier', 'Supplier'|trans)|raw }}</th>
+	<th>{{ pager.create_header('delivered', 'Delivered'|trans)|raw }}</th>
+{% endblock pager_table_head %}
+
+{% block pager_table_row %}
+	<td>{{ object.id }}</td>
+	<td>{{ object.created|date }}</td>
+	<td>{{ object.get_supplier().company }}</td>
+	<td>
+		{% if object.delivered %}
+			<span class="label label-success">{% trans "Yes" %}</span>
+		{% else %}
+			<span class="label label-danger">{% trans "No" %}</span>
+		{% endif %}
+	</td>
+{% endblock pager_table_row %}
