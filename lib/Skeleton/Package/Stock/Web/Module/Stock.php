@@ -33,17 +33,11 @@ class Stock extends Crud {
 	 */
 	public $template = '@skeleton-package-stock\content.twig';
 
-	public function display() {
-		parent::display();
-
-		/**
-		 * Initialize the template object
-		 */
-		$template = Template::Get();
-		$pager = $this->get_pager();
-
-	}
-
+	/**
+	 * Edit stock for product
+	 *
+	 * @access public
+	 */
 	public function display_edit() {
 		parent::display_edit();
 		$template = Template::get();
@@ -113,7 +107,7 @@ class Stock extends Crud {
 		$product = $classname::get_by_id($_GET['id']);
 		\Skeleton\Package\Stock\Stock::change($product, $_POST['stock_movement']['movement'], $_SESSION['user'], $_POST['stock_movement']['comment']);
 
-		Session::redirect('/' . $this->get_path() . '?action=edit&id=' . $product->id);
+		Session::redirect('/' . $this->get_module_path() . '?action=edit&id=' . $product->id);
 	}
 
 }

@@ -75,6 +75,21 @@ class Migration_20160218_104518_Supplier extends \Skeleton\Database\Migration {
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		", []);
 
+		$db->query("
+			CREATE TABLE `product_stock` (
+			  `id` int(11) NOT NULL AUTO_INCREMENT,
+			  `stock_object_classname` varchar(64) NOT NULL,
+			  `stock_object_id` int(11) NOT NULL,
+			  `trigger_object_classname` varchar(64) NOT NULL,
+			  `trigger_object_id` int(11) NOT NULL,
+			  `total` int(11) NOT NULL,
+			  `movement` int(11) NOT NULL,
+			  `created` datetime NOT NULL,
+			  `comment` varchar(128) NOT NULL,
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		", []);
+
 	}
 
 	/**

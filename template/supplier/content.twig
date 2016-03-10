@@ -65,6 +65,7 @@
 					{% for purchase_order_item in object.get_backorder() %}
 						{% if loop.first %}
 							<table class="table table-alternate table-hover">
+							<thead>
 							<tr>
 								<th>{% trans "Purchase order" %}</th>
 								<th>{% trans "Name" %}</th>
@@ -72,6 +73,8 @@
 								<th>{% trans "Delivered" %}</th>
 								<th>{% trans "Backorder" %}</th>
 							</tr>
+							</thead>
+							<tbody>
 						{% endif %}
 						<tr>
 							<td>
@@ -84,6 +87,13 @@
 							<td>{{ purchase_order_item.delivered }}</td>
 							<td>{{ purchase_order_item.amount-purchase_order_item.delivered }}</td>
 						</tr>
+
+						{% if loop.last %}
+							</tbody>
+							</table>
+						{% endif %}
+					{% else %}
+						<div class="alert alert-info">{% trans "No products are awaiting delivery" %}</div>
 					{% endfor %}
 				</div>
 			</div>
@@ -91,7 +101,30 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">{% trans "Purchase list" %}</div>
 				<div class="panel-body">
-					{% for  %}
+					{% for overview in object.get_purchase_list_overview() %}
+						{% if loop.first %}
+							<table class="table table-alternate table-hover">
+							<head>
+								<tr>
+									<th>{% trans "Product" %}</th>
+									<th>{% trans "Amount" %}</th>
+							</thead>
+							<tbody>
+						{% endif %}
+
+						<tr>
+							<td>{{ overview.product.get_name() }}</td>
+							<td>{{ overview.count }}</td>
+						</tr>
+
+						{% if loop.last %}
+							</tbody>
+							</table>
+						{% endif %}
+					{% else %}
+						<div class="alert alert-info">{% trans "No products needs to be purchased" %}</div>
+					{% endfor %}
+
 				</div>
 			</div>
 

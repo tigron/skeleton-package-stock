@@ -23,6 +23,28 @@ class Supplier {
 	];
 
 	/**
+	 * Get an overview of the purchase list
+	 *
+	 * @access public
+	 * @return array $purchase_list
+	 */
+	public function get_purchase_list_overview() {
+		$purchase_list = $this->get_purchase_list();
+		$overview = [];
+		foreach ($purchase_list as $product) {
+			if (!isset($overview[ get_class($product) . '-' . $product->id])) {
+				$overview[ get_class($product) . '-' . $product->id] = [
+					'product' => $product,
+					'count' => 0
+				];
+			}
+
+			$overview[ get_class($product) . '-' . $product->id]['count']++;
+		}
+		return $overview;
+	}
+
+	/**
 	 * Get purchase_list
 	 * Get a list of products that needs to be delivered and are not in stock
 	 *
@@ -39,6 +61,19 @@ class Supplier {
 			}
 
 			$to_deliver[ $delivery_item->deliverable_object_classname . '-' . $delivery_item->deliverable_object_id ]++;
+		}
+
+		foreach ($this->get_backorder() as $purchase_order_item) {
+			$product = $purchase_order_item->get_stock_object();
+			if (!isset($to_deliver[ get_class($product) . '-' . $product->id])) {
+				continue;
+			}
+
+			$backordered = $purchase_order_item->amount - $purchase_order_item->delivered;
+			$to_deliver[get_class($product) . '-' . $product->id] -= $backordered;
+			if ($to_deliver[get_class($product) . '-' . $product->id] < 0) {
+				unset($to_deliver[get_class($product) . '-' . $product->id]);
+			}
 		}
 
 		$purchase_list = [];
