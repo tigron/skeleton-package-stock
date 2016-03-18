@@ -70,8 +70,25 @@ class Stock extends Crud {
 		} catch (\Exception $e) {
 			$template->assign('stock', 0);
 		}
-		$backorder = \Skeleton\Package\Stock\Purchase\Order\Item::count_backorder($product);
+
+		$backorder = \Skeleton\Package\Stock\Purchase\Order\Item::get_backorder($product);
 		$template->assign('backorder', $backorder);
+		$count_backorder = \Skeleton\Package\Stock\Purchase\Order\Item::count_backorder($product);
+		$template->assign('count_backorder', $count_backorder);
+
+		if (class_exists('\Skeleton\Package\Delivery\Item')) {
+			$to_deliver = \Skeleton\Package\Delivery\Item::get_undelivered_by_deliverable($product);
+			$to_deliver_overview = [];
+			foreach ($to_deliver as $delivery_item) {
+				if (!isset($to_deliver_overview[$delivery_item->delivery_id])) {
+					$to_deliver_overview[$delivery_item->delivery_id] = 0;
+				}
+				$to_deliver_overview[$delivery_item->delivery_id]++;
+			}
+
+			$template->assign('to_deliver_overview', $to_deliver_overview);
+			$template->assign('to_deliver', $to_deliver);
+		}
 
 
 		$pager = new Pager('\Skeleton\Package\Stock\Stock');

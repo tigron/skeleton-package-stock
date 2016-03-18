@@ -140,6 +140,16 @@ class Order extends Crud {
 	}
 
 	/**
+	 * Download PDF
+	 *
+	 * @access public
+	 */
+	public function display_download_excel() {
+		$purchase_order = \Skeleton\Package\Stock\Purchase\Order::get_by_id($_GET['id']);
+		$purchase_order->export();
+	}
+
+	/**
 	 * add_delivery
 	 *
 	 * @access public
@@ -226,6 +236,18 @@ class Order extends Crud {
 		$pager->add_sort_permission('id');
 		$pager->add_sort_permission('company');
 		$pager->add_sort_permission('email');
+
+		if (isset($_POST['delivered'])) {
+			if ($_POST['delivered'] == 1) {
+				$pager->add_condition('purchase_order.delivered', 1);
+			} elseif ($_POST['delivered'] == 0) {
+				$pager->add_condition('purchase_order.delivered', 0);
+			} else {
+				$pager->clear_condition('purchase_order.delivered');
+			}
+		}
+
+
 		$pager->set_sort('id');
 		$pager->set_direction('desc');
 		return $pager;

@@ -15,7 +15,7 @@
 		</div>
 	{% endif %}
 
-	<form action="{{ env.module.get_module_path() }}?action=edit&id={{ object.id }}" method="post" class="form-horizontal">
+	<form action="{{ env.module.get_module_path() }}?action=edit&id={{ object.id }}" method="post" class="form-horizontal form-condensed">
 
 	<div class="panel panel-default">
 		<div class="panel-heading">{% trans "Stock properties" %}</div>
@@ -41,8 +41,22 @@
 
 			<div class="form-group">
 				<label class="col-xs-3 control-label">{% trans "Back order" %}</label>
-				<div class="col-xs-9"><p class="form-control-static">{{ backorder }}</p></div>
+				<div class="col-xs-9"><p class="form-control-static">{{ count_backorder }}</p></div>
 			</div>
+
+			{% if to_deliver is defined %}
+
+				<div class="form-group">
+					<label class="col-xs-3 control-label">{% trans "To deliver" %}</label>
+					<div class="col-xs-9"><p class="form-control-static">{{ to_deliver|length }}</p></div>
+				</div>
+
+				<div class="form-group">
+					<label class="col-xs-3 control-label">{% trans "Virtual stock" %}</label>
+					<div class="col-xs-9"><p class="form-control-static">{{ stock + count_backorder - to_deliver|length }}</p></div>
+				</div>
+
+			{% endif %}
 
 			<div class="form-group">
 				<div class="col-xs-9 col-xs-offset-3">
@@ -67,41 +81,142 @@
 			</div>
 		</div>
 		<div class="panel-body">
-			<table class="table table-condensed">
-				<thead>
-					<tr>
-						<th>{% trans "Date" %}</th>
-						<th>{% trans "Movement" %}</th>
-						<th>{% trans "Stock" %}</th>
-						<th>{% trans "Trigger" %}</th>
-						<th>{% trans "Comment" %}</th>
-					</tr>
-				</thead>
-				<tbody>
-				{% for item in pager.items %}
-		    		<tr>
-						<td>{{ item.created|datetime }}</td>
-						<td>{{ item.movement }}</td>
-						<td>{{ item.total }}</td>
-						<td>
-							{% block trigger_object %}
 
-								{% if item.trigger_object_classname == 'Skeleton\\Package\\Delivery\\Shipment' %}
-									<a href="{{ ('/skeleton-package-delivery/delivery?action=edit&id=' ~ item.trigger_object.delivery_id)|reverse_rewrite }}">{% trans "Shipment" %} {{ item.trigger_object_id }}</a>
-								{% elseif item.trigger_object_classname == 'Skeleton\\Package\\Stock\\Purchase\\Order' %}
-									<a href="{{ ('/skeleton-package-stock/purchase_order?action=edit&id=' ~ item.trigger_object_id)|reverse_rewrite }}">{% trans "Purchase Order" %} {{ item.trigger_object_id }}</a>
-								{% else %}
-									|{{ item.trigger_object_classname|raw }}| {{ item.trigger_object_id }}
-								{% endif %}
-							{% endblock trigger_object %}
-						</td>
-						<td>{{ item.comment }}</td>
-					</tr>
-				{% endfor %}
-				</tbody>
-			</table>
+
+		{% for item in pager.items %}
+			{% if loop.first %}
+				<table class="table table-striped table-hover table-condensed">
+					<thead>
+						<tr>
+							<th>{% trans "Date" %}</th>
+							<th>{% trans "Movement" %}</th>
+							<th>{% trans "Stock" %}</th>
+							<th>{% trans "Trigger" %}</th>
+							<th>{% trans "Comment" %}</th>
+						</tr>
+					</thead>
+					<tbody>
+			{% endif %}
+
+    		<tr>
+				<td>{{ item.created|datetime }}</td>
+				<td>{{ item.movement }}</td>
+				<td>{{ item.total }}</td>
+				<td>
+					{% block trigger_object %}
+						{% if item.trigger_object_classname == 'Skeleton\\Package\\Delivery\\Shipment' %}
+							<a href="{{ ('/skeleton-package-delivery/delivery?action=edit&id=' ~ item.trigger_object.delivery_id)|reverse_rewrite }}">
+								{% trans "Shipment" %} {{ item.trigger_object_id }}
+							</a>
+						{% elseif item.trigger_object_classname == 'Skeleton\\Package\\Stock\\Purchase\\Order' %}
+							<a href="{{ ('/skeleton-package-stock/purchase_order?action=edit&id=' ~ item.trigger_object_id)|reverse_rewrite }}">
+								{% trans "Purchase Order" %} {{ item.trigger_object_id }}
+							</a>
+						{% else %}
+							{{ item.trigger_object_classname|raw }} {{ item.trigger_object_id }}
+						{% endif %}
+					{% endblock trigger_object %}
+				</td>
+				<td>{{ item.comment }}</td>
+			</tr>
+
+			{% if loop.last %}
+					</tbody>
+				</table>
+				{{ pager.links|raw }}
+			{% endif %}
+		{% else %}
+			<p>{% trans "No products added yet" %}
+		{% endfor %}
 		</div>
 	</div>
+
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			{% trans "Backorder" %}
+		</div>
+		<div class="panel-body">
+			{% for purchase_order_item in backorder %}
+				{% if loop.first %}
+					<table class="table table-alternate table-hover">
+					<thead>
+						<tr>
+							<th>{% trans "Purchase order" %}</th>
+							<th>{% trans "Price" %}</th>
+							<th>{% trans "Amount" %}</th>
+							<th>{% trans "Delivered" %}</th>
+							<th>{% trans "Backordered" %}</th>
+						</tr>
+					</thead>
+					<tbody>
+				{% endif %}
+
+				<tr>
+					<td>{% trans "Purchase order" %} {{ purchase_order_item.purchase_order_id }}</td>
+					<td>&euro;{{ purchase_order_item.price }}</td>
+					<td>{{ purchase_order_item.amount }}</td>
+					<td>{{ purchase_order_item.delivered }}</td>
+					<td>{{ purchase_order_item.amount-purchase_order_item.delivered }}</td>
+				</tr>
+
+				{% if loop.last %}
+					<thead>
+						<tr>
+							<th colspan="4" class="text-right">{% trans "Total" %}</th>
+							<th>{{ count_backorder }}</th>
+						</tr>
+					</thead>
+					</tbody>
+					</table>
+				{% endif %}
+			{% else %}
+				<div class="alert alert-info">{% trans "No backorders for this product" %}</div>
+			{% endfor %}
+		</div>
+	</div>
+
+	{% if to_deliver is defined %}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				{% trans "To deliver" %}
+			</div>
+			<div class="panel-body">
+				{% for delivery_id, count in to_deliver_overview %}
+					{% if loop.first %}
+						<table class="table table-alternate table-hover">
+						<thead>
+							<tr>
+								<th>{% trans "Delivery" %}</th>
+								<th>{% trans "To deliver" %}</th>
+							</tr>
+						</thead>
+						<tbody>
+					{% endif %}
+
+					<tr>
+						<td>{{ delivery_id }}</td>
+						<td>{{ count }}</td>
+					</tr>
+
+					{% if loop.last %}
+						<thead>
+							<tr>
+								<th class="text-right">{% trans "Total" %}</th>
+								<th>{{ to_deliver|length }}</th>
+							</tr>
+						</thead>
+						</tbody>
+						</table>
+					{% endif %}
+				{% else %}
+					<div class="alert alert-info">{% trans "No open deliveries for this item" %}</div>
+				{% endfor %}
+			</div>
+		</div>
+	{% endif %}
+
+
 {% endblock page_edit %}
 
 {% block pager_table_head %}

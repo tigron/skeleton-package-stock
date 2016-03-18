@@ -7,7 +7,7 @@
 		"tigron/skeleton-pager": "*"
     },
     "require" : {
-        "bower-asset/bootstrap": "3.3.*"
+    	"phpoffice/phpexcel": "~1.8"
     },
     "license": "MIT",
     "authors": [

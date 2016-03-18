@@ -87,6 +87,23 @@ class Item {
 	}
 
 	/**
+	 * Get backorder
+	 *
+	 * @access public
+	 * @param \Skeleton\Package\Stock\Object $object
+	 * @return array $purchase_order_items
+	 */
+	public static function get_backorder(\Skeleton\Package\Stock\Object $object) {
+		$db = Database::get();
+		$ids = $db->get_column('SELECT id FROM purchase_order_item WHERE stock_object_id=? AND stock_object_classname=? AND amount != delivered', [ $object->id, get_class($object) ]);
+		$purchase_order_items = [];
+		foreach ($ids as $id) {
+			$purchase_order_items[] = self::get_by_id($id);
+		}
+		return $purchase_order_items;
+	}
+
+	/**
 	 * Count backorder
 	 *
 	 * @access public
@@ -94,12 +111,11 @@ class Item {
 	 * @return int $backorder
 	 */
 	public static function count_backorder(\Skeleton\Package\Stock\Object $object) {
-		$db = Database::get();
-		$count = $db->get_one('SELECT SUM(amount-delivered) FROM purchase_order_item WHERE stock_object_id=? AND stock_object_classname=? AND amount != delivered', [ $object->id, get_class($object) ]);
-		if ($count === null) {
-			return 0;
-		} else {
-			return $count;
+		$purchase_order_items = self::get_backorder($object);
+		$backorder = 0;
+		foreach ($purchase_order_items as $purchase_order_item) {
+			$backorder += $purchase_order_item->amount-$purchase_order_item->delivered;
 		}
+		return $backorder;
 	}
 }

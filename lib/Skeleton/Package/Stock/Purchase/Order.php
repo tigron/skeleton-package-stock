@@ -49,6 +49,55 @@ class Order {
 	}
 
 	/**
+	 * Export
+	 *
+	 * @access public
+	 */
+	public function export() {
+		$excel = new \PHPExcel();
+		$worksheet = $excel->getActiveSheet();
+
+		$row = 1;
+
+		$worksheet->setCellValueByColumnAndRow(0, $row, 'Product');
+		$worksheet->setCellValueByColumnAndRow(1, $row, 'price');
+		$worksheet->setCellValueByColumnAndRow(2, $row, 'amount');
+		$worksheet->setCellValueByColumnAndRow(3, $row, 'Total price');
+
+		$excel->getActiveSheet()->getStyle('A1:D1')->getFont()->setBold(true);
+
+		foreach ($this->get_purchase_order_items() as $purchase_order_item) {
+			$row++;
+
+			$worksheet->setCellValueByColumnAndRow(0, $row, $purchase_order_item->get_stock_object()->get_name());
+			$worksheet->setCellValueByColumnAndRow(1, $row, $purchase_order_item->price);
+			$worksheet->setCellValueByColumnAndRow(2, $row, $purchase_order_item->amount);
+			$worksheet->setCellValueByColumnAndRow(3, $row, $purchase_order_item->price*$purchase_order_item->amount);
+		}
+		$row++;
+
+		$worksheet->setCellValueByColumnAndRow(3, $row, $this->get_price());
+		$excel->getActiveSheet()->getStyle($row . ':' . $row)->getFont()->setBold(true);
+
+
+		$cellIterator = $worksheet->getRowIterator()->current()->getCellIterator();
+		$cellIterator->setIterateOnlyExistingCells(true);
+		/** @var PHPExcel_Cell $cell */
+		foreach ($cellIterator as $cell) {
+		    $worksheet->getColumnDimension($cell->getColumn())->setAutoSize(true);
+		}
+
+		$writer = new \PHPExcel_Writer_Excel2007($excel);
+
+		header('Content-Type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment;filename="purchase_order_' . $this->id . '.xls"');
+		header('Cache-Control: max-age=0');
+
+		$writer->save('php://output');
+		exit;
+	}
+
+	/**
 	 * Check delivered
 	 *
 	 * @access public
