@@ -98,27 +98,31 @@
 					<tbody>
 			{% endif %}
 
-    		<tr>
-				<td>{{ item.created|datetime }}</td>
-				<td>{{ item.movement }}</td>
-				<td>{{ item.total }}</td>
-				<td>
-					{% block trigger_object %}
-						{% if item.trigger_object_classname == 'Skeleton\\Package\\Delivery\\Shipment' %}
-							<a href="{{ ('/skeleton-package-delivery/delivery?action=edit&id=' ~ item.trigger_object.delivery_id)|reverse_rewrite }}">
-								{% trans "Shipment" %} {{ item.trigger_object_id }}
-							</a>
-						{% elseif item.trigger_object_classname == 'Skeleton\\Package\\Stock\\Purchase\\Order' %}
-							<a href="{{ ('/skeleton-package-stock/purchase_order?action=edit&id=' ~ item.trigger_object_id)|reverse_rewrite }}">
-								{% trans "Purchase Order" %} {{ item.trigger_object_id }}
-							</a>
-						{% else %}
-							{{ item.trigger_object_classname|raw }} {{ item.trigger_object_id }}
-						{% endif %}
-					{% endblock trigger_object %}
-				</td>
-				<td>{{ item.comment }}</td>
-			</tr>
+			{% block pager_moment_table_row %}
+				<tr>
+					<td>{{ item.created|datetime }}</td>
+					<td>
+						{% if item.movement > 0 %}+{% endif %}{{ item.movement }}
+					</td>
+					<td>{{ item.total }}</td>
+					<td>
+						{% block trigger_object %}
+							{% if item.trigger_object_classname == 'Skeleton\\Package\\Delivery\\Shipment' %}
+								<a href="{{ ('/skeleton-package-delivery/delivery?action=edit&id=' ~ item.trigger_object.delivery_id)|reverse_rewrite }}">
+									{% trans "Shipment" %} {{ item.trigger_object_id }}
+								</a>
+							{% elseif item.trigger_object_classname == 'Skeleton\\Package\\Stock\\Purchase\\Order' %}
+								<a href="{{ ('/skeleton-package-stock/purchase_order?action=edit&id=' ~ item.trigger_object_id)|reverse_rewrite }}">
+									{% trans "Purchase Order" %} {{ item.trigger_object_id }}
+								</a>
+							{% else %}
+								{{ item.trigger_object_classname|raw }} {{ item.trigger_object_id }}
+							{% endif %}
+						{% endblock trigger_object %}
+					</td>
+					<td>{{ item.comment }}</td>
+				</tr>
+			{% endblock pager_moment_table_row %}
 
 			{% if loop.last %}
 					</tbody>

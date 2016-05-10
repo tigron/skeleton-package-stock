@@ -70,10 +70,7 @@ class Order extends Crud {
 			}
 		}
 
-		$template = Template::get();
-
 		$supplier = Supplier::get_by_id($_SESSION['skeleton-package-stock']['po']['supplier_id']);
-		$template->assign('supplier', $supplier);
 
 		$classname = \Skeleton\Package\Stock\Config::$object_stock_interface;
 		$pager = new Pager($classname);
@@ -94,12 +91,14 @@ class Order extends Crud {
 		}
 
 		if (isset($_POST['search'])) {
-			$pager->set_search($_POST['search'], $search_fields );
+			$pager->set_search($_POST['search'], $search_fields);
 		}
+
 		$pager->page();
+
+		$template = Template::get();
+		$template->assign('supplier', $supplier);
 		$template->assign('pager', $pager);
-
-
 	}
 
 	/**
@@ -162,11 +161,13 @@ class Order extends Crud {
 			$purchase_order->save();
 		}
 
-		foreach ($_POST['delivery'] as $purchase_order_item_id => $amount) {
-			$purchase_order_item = \Skeleton\Package\Stock\Purchase\Order\Item::get_by_id($purchase_order_item_id);
-			$purchase_order_item->deliver($amount, $purchase_order, 'Delivery for PO' . $purchase_order->id);
+		if (isset($_POST['delivery'])) {
+			foreach ($_POST['delivery'] as $purchase_order_item_id => $amount) {
+				$purchase_order_item = \Skeleton\Package\Stock\Purchase\Order\Item::get_by_id($purchase_order_item_id);
+				$purchase_order_item->deliver($amount, $purchase_order, 'Delivery for PO' . $purchase_order->id);
+			}
 		}
-		Session::Redirect($this->get_module_path() . '?action=edit&id=' . $purchase_order->id);
+		Session::redirect($this->get_module_path() . '?action=edit&id=' . $purchase_order->id);
 	}
 
 	/**

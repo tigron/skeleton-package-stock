@@ -103,6 +103,11 @@ Create a template for your module that injects the generated templates into your
 	{% endblock content %}
 
 
+You can override the stock movment row if you want to display specific information about the trigger object
+
+    {% block pager_moment_table_row %}
+        ...
+    {% endblock pager_moment_table_row %}
 
 
 Create a module in your application that extends from Skeleton\Package\Stock\Web\Module\Supplier

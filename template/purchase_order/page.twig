@@ -29,16 +29,16 @@
 					<thead>
 						<tr>
 							<th>{{ pager.create_header('Name'|trans, name)|raw }}</th>
-							<th width="100">{% trans "Purchase price" %}</th>
-							<th width="100">{% trans "Amount" %}</th>
-							<th width="100">{% trans "Total" %}</th>
-							<th width="100"></th>
+							<th width="10%">{% trans "Purchase price" %}</th>
+							<th width="10%">{% trans "Amount" %}</th>
+							<th width="10%">{% trans "Total" %}</th>
+							<th width="10%"></th>
 						</tr>
 					</thead>
 					<tbody>
 						{% for object in pager.items %}
 							<tr data-id="{{ object.id }}" data-classname="{{ object|get_class }}">
-								<td><p class="form-control-static">{{ object.name }}</p></td>
+								<td><p class="form-control-static">{{ object.get_name() }}</p></td>
 								<td>
 									<div class="input-group">
 										<div class="input-group-addon">&euro;</div>

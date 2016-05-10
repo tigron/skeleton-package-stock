@@ -14,7 +14,7 @@
 		<div class="form-group">
 			<label class="control-label col-xs-3" for="name">{% trans "Movement" %}</label>
 			<div class="col-xs-9">
-				<input type="number" min="{{ object.stock*-1 }}" value="0" name="stock_movement[movement]" id="name" class="form-control" onchange="new_stock(this);" />
+				<input type="number" min="{{ object.get_stock()*-1 }}" value="0" name="stock_movement[movement]" id="name" class="form-control" onchange="new_stock(this);" />
 			</div>
 		</div>
 
@@ -31,7 +31,7 @@
 
 	<script type="text/javascript">
 		function new_stock(element) {
-			$('#new_stock').html( parseInt($(element).val()) + {{ object.stock }})
+			$('#new_stock').html( parseInt($(element).val()) + {{ object.get_stock() }})
 		}
 
 		$('#frm_movement').on('submit', function(event) {

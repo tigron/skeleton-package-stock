@@ -1,146 +1,207 @@
+{% extends "@skeleton-package-crud/content.twig" %}
+
+{% set object_name = 'Supplier'|trans %}
+
 {% block content %}
-	{% embed "@skeleton-package-crud/content.twig" with {'object_name' : 'Supplier'|trans}%}
-		{% block form_edit %}
-			<div class="form-group">
-				<label class="col-xs-3 control-label">{% trans "Company" %}</label>
-				<div class="col-xs-9">
-					<input type="text" name="object[company]" value="{{ object.company }}" class="form-control">
-				</div>
-			</div>
 
-			<div class="form-group">
-				<label class="col-xs-3 control-label">{% trans "Street" %}</label>
-				<div class="col-xs-9">
-					<input type="text" name="object[street]" value="{{ object.street }}" class="form-control">
-				</div>
+	{% block form_create %}
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "Company" %}</label>
+			<div class="col-xs-9">
+				<input type="text" name="object[company]" value="{{ object.company }}" class="form-control">
 			</div>
+		</div>
 
-			<div class="form-group">
-				<label class="col-xs-3 control-label">{% trans "Housenumber" %}</label>
-				<div class="col-xs-9">
-					<input type="text" name="object[housenumber]" value="{{ object.housenumber }}" class="form-control">
-				</div>
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "Street" %}</label>
+			<div class="col-xs-9">
+				<input type="text" name="object[street]" value="{{ object.street }}" class="form-control">
 			</div>
+		</div>
 
-			<div class="form-group">
-				<label class="col-xs-3 control-label">{% trans "Zip" %}</label>
-				<div class="col-xs-9">
-					<input type="text" name="object[zip]" value="{{ object.zip }}" class="form-control">
-				</div>
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "Housenumber" %}</label>
+			<div class="col-xs-9">
+				<input type="text" name="object[housenumber]" value="{{ object.housenumber }}" class="form-control">
 			</div>
+		</div>
 
-			<div class="form-group">
-				<label class="col-xs-3 control-label">{% trans "City" %}</label>
-				<div class="col-xs-9">
-					<input type="text" name="object[city]" value="{{ object.city }}" class="form-control">
-				</div>
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "Zip" %}</label>
+			<div class="col-xs-9">
+				<input type="text" name="object[zip]" value="{{ object.zip }}" class="form-control">
 			</div>
+		</div>
 
-			<div class="form-group">
-				<label class="col-xs-3 control-label">{% trans "Phone" %}</label>
-				<div class="col-xs-9">
-					<input type="text" name="object[phone]" value="{{ object.phone }}" class="form-control">
-				</div>
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "City" %}</label>
+			<div class="col-xs-9">
+				<input type="text" name="object[city]" value="{{ object.city }}" class="form-control">
 			</div>
+		</div>
 
-			<div class="form-group">
-				<label class="col-xs-3 control-label">{% trans "Fax" %}</label>
-				<div class="col-xs-9">
-					<input type="text" name="object[fax]" value="{{ object.fax }}" class="form-control">
-				</div>
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "Phone" %}</label>
+			<div class="col-xs-9">
+				<input type="text" name="object[phone]" value="{{ object.phone }}" class="form-control">
 			</div>
+		</div>
 
-			<div class="form-group">
-				<label class="col-xs-3 control-label">{% trans "Email" %}</label>
-				<div class="col-xs-9">
-					<input type="text" name="object[email]" value="{{ object.email }}" class="form-control">
-				</div>
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "Fax" %}</label>
+			<div class="col-xs-9">
+				<input type="text" name="object[fax]" value="{{ object.fax }}" class="form-control">
 			</div>
-		{% endblock form_edit %}
+		</div>
 
-		{% block page_edit_footer %}
-			<div class="panel panel-default">
-				<div class="panel-heading">{% trans "Backorder" %}</div>
-				<div class="panel-body">
-					{% for purchase_order_item in object.get_backorder() %}
-						{% if loop.first %}
-							<table class="table table-alternate table-hover">
-							<thead>
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "Email" %}</label>
+			<div class="col-xs-9">
+				<input type="text" name="object[email]" value="{{ object.email }}" class="form-control">
+			</div>
+		</div>
+	{% endblock form_create %}
+
+	{% block form_edit %}
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "Company" %}</label>
+			<div class="col-xs-9">
+				<input type="text" name="object[company]" value="{{ object.company }}" class="form-control">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "Street" %}</label>
+			<div class="col-xs-9">
+				<input type="text" name="object[street]" value="{{ object.street }}" class="form-control">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "Housenumber" %}</label>
+			<div class="col-xs-9">
+				<input type="text" name="object[housenumber]" value="{{ object.housenumber }}" class="form-control">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "Zip" %}</label>
+			<div class="col-xs-9">
+				<input type="text" name="object[zip]" value="{{ object.zip }}" class="form-control">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "City" %}</label>
+			<div class="col-xs-9">
+				<input type="text" name="object[city]" value="{{ object.city }}" class="form-control">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "Phone" %}</label>
+			<div class="col-xs-9">
+				<input type="text" name="object[phone]" value="{{ object.phone }}" class="form-control">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "Fax" %}</label>
+			<div class="col-xs-9">
+				<input type="text" name="object[fax]" value="{{ object.fax }}" class="form-control">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-xs-3 control-label">{% trans "Email" %}</label>
+			<div class="col-xs-9">
+				<input type="text" name="object[email]" value="{{ object.email }}" class="form-control">
+			</div>
+		</div>
+	{% endblock form_edit %}
+
+	{% block page_edit_footer %}
+		<div class="panel panel-default">
+			<div class="panel-heading">{% trans "Backorder" %}</div>
+			<div class="panel-body">
+				{% for purchase_order_item in object.get_backorder() %}
+					{% if loop.first %}
+						<table class="table table-alternate table-hover">
+						<thead>
+						<tr>
+							<th>{% trans "Purchase order" %}</th>
+							<th>{% trans "Name" %}</th>
+							<th>{% trans "Ordered" %}</th>
+							<th>{% trans "Delivered" %}</th>
+							<th>{% trans "Backorder" %}</th>
+						</tr>
+						</thead>
+						<tbody>
+					{% endif %}
+					<tr>
+						<td>
+							<a href="{{ ('/skeleton-package-stock/purchase_order?action=edit&id=' ~ purchase_order_item.purchase_order_id)|reverse_rewrite }}">
+								{% trans "Purchase Order" %} {{ purchase_order_item.purchase_order_id }}
+							</a>
+						</td>
+						<td>{{ purchase_order_item.get_stock_object().get_name() }}</td>
+						<td>{{ purchase_order_item.amount }}</td>
+						<td>{{ purchase_order_item.delivered }}</td>
+						<td>{{ purchase_order_item.amount-purchase_order_item.delivered }}</td>
+					</tr>
+
+					{% if loop.last %}
+						</tbody>
+						</table>
+					{% endif %}
+				{% else %}
+					<div class="alert alert-info">{% trans "No products are awaiting delivery" %}</div>
+				{% endfor %}
+			</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">{% trans "Purchase list" %}</div>
+			<div class="panel-body">
+				{% for overview in object.get_purchase_list_overview() %}
+					{% if loop.first %}
+						<table class="table table-alternate table-hover">
+						<head>
 							<tr>
-								<th>{% trans "Purchase order" %}</th>
-								<th>{% trans "Name" %}</th>
-								<th>{% trans "Ordered" %}</th>
-								<th>{% trans "Delivered" %}</th>
-								<th>{% trans "Backorder" %}</th>
-							</tr>
-							</thead>
-							<tbody>
-						{% endif %}
-						<tr>
-							<td>
-								<a href="{{ ('/skeleton-package-stock/purchase_order?action=edit&id=' ~ purchase_order_item.purchase_order_id)|reverse_rewrite }}">
-									{% trans "Purchase Order" %} {{ purchase_order_item.purchase_order_id }}
-								</a>
-							</td>
-							<td>{{ purchase_order_item.get_stock_object().get_name() }}</td>
-							<td>{{ purchase_order_item.amount }}</td>
-							<td>{{ purchase_order_item.delivered }}</td>
-							<td>{{ purchase_order_item.amount-purchase_order_item.delivered }}</td>
-						</tr>
+								<th>{% trans "Product" %}</th>
+								<th>{% trans "Amount" %}</th>
+						</thead>
+						<tbody>
+					{% endif %}
 
-						{% if loop.last %}
-							</tbody>
-							</table>
-						{% endif %}
-					{% else %}
-						<div class="alert alert-info">{% trans "No products are awaiting delivery" %}</div>
-					{% endfor %}
-				</div>
+					<tr>
+						<td>{{ overview.product.get_name() }}</td>
+						<td>{{ overview.count }}</td>
+					</tr>
+
+					{% if loop.last %}
+						</tbody>
+						</table>
+					{% endif %}
+				{% else %}
+					<div class="alert alert-info">{% trans "No products needs to be purchased" %}</div>
+				{% endfor %}
+
 			</div>
+		</div>
 
-			<div class="panel panel-default">
-				<div class="panel-heading">{% trans "Purchase list" %}</div>
-				<div class="panel-body">
-					{% for overview in object.get_purchase_list_overview() %}
-						{% if loop.first %}
-							<table class="table table-alternate table-hover">
-							<head>
-								<tr>
-									<th>{% trans "Product" %}</th>
-									<th>{% trans "Amount" %}</th>
-							</thead>
-							<tbody>
-						{% endif %}
+	{% endblock page_edit_footer %}
 
-						<tr>
-							<td>{{ overview.product.get_name() }}</td>
-							<td>{{ overview.count }}</td>
-						</tr>
+	{% block pager_table_head %}
+		<th>{{ pager.create_header('ID'|trans, 'id')|raw }}</th>
+		<th>{{ pager.create_header('Company'|trans, 'company')|raw }}</th>
+		<th>{{ pager.create_header('Email'|trans, 'email')|raw }}</th>
+	{% endblock pager_table_head %}
 
-						{% if loop.last %}
-							</tbody>
-							</table>
-						{% endif %}
-					{% else %}
-						<div class="alert alert-info">{% trans "No products needs to be purchased" %}</div>
-					{% endfor %}
-
-				</div>
-			</div>
-
-		{% endblock page_edit_footer %}
-
-		{% block pager_table_head %}
-			<th>{{ pager.create_header('ID'|trans, 'id')|raw }}</th>
-			<th>{{ pager.create_header('Company'|trans, 'company')|raw }}</th>
-			<th>{{ pager.create_header('Email'|trans, 'email')|raw }}</th>
-		{% endblock pager_table_head %}
-
-		{% block pager_table_row %}
-			<td>{{ object.id }}</td>
-			<td>{{ object.company }}</td>
-			<td>{{ object.email }}</td>
-		{% endblock pager_table_row %}
-	{% endembed %}
+	{% block pager_table_row %}
+		<td>{{ object.id }}</td>
+		<td>{{ object.company }}</td>
+		<td>{{ object.email }}</td>
+	{% endblock pager_table_row %}
 
 {% endblock content %}

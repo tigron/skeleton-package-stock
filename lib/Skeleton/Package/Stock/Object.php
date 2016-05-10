@@ -27,5 +27,28 @@ interface Object {
 	 */
 	public function get_purchase_price();
 
+	/**
+	 * Get stock
+	 *
+	 * @access public
+	 * @return int $stock
+	 */
+	public function get_stock();
+
+	/**
+	 * Get backorder count
+	 *
+	 * @access public
+	 * @return int $backorder_count
+	 */
+	public function get_backorder_count();
+
+	/**
+	 * Get to deliver count
+	 *
+	 * @access public
+	 * @return int $to_deliver_count
+	 */
+	public function get_to_deliver_count();
 
 }
