@@ -36,6 +36,14 @@ interface Object {
 	public function get_stock();
 
 	/**
+	 * Check if object has stock
+	 *
+	 * @access public
+	 * @return bool $has_stock
+	 */
+	public function has_stock();
+
+	/**
 	 * Get backorder count
 	 *
 	 * @access public

@@ -77,6 +77,10 @@ class Stock {
 	 * @param object $trigger
 	 */
 	public static function change(\Skeleton\Package\Stock\Object $object, $amount, $trigger, $comment) {
+		if ($object->has_stock() === false) {
+			return;
+		}
+
 		try {
 			$last_stock = self::get_last_by_object($object);
 			$last_stock = $last_stock->total;
