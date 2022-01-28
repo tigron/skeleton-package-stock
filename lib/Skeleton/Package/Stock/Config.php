@@ -17,5 +17,4 @@ class Config {
 	 * @var string $object_stock_interface
 	 */
 	public static $object_stock_interface = null;
-
 }

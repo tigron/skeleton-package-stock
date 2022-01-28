@@ -44,7 +44,7 @@ class Item {
 	 * Get Stock object
 	 *
 	 * @access public
-	 * @return \Skeleton\Package\Stock\Object $object
+	 * @return \Skeleton\Package\Stock\Item $object
 	 */
 	public function get_stock_object() {
 		$classname = $this->stock_object_classname;
@@ -90,10 +90,10 @@ class Item {
 	 * Get backorder
 	 *
 	 * @access public
-	 * @param \Skeleton\Package\Stock\Object $object
+	 * @param \Skeleton\Package\Stock\Item $object
 	 * @return array $purchase_order_items
 	 */
-	public static function get_backorder(\Skeleton\Package\Stock\Object $object) {
+	public static function get_backorder(\Skeleton\Package\Stock\Item $object) {
 		$db = Database::get();
 		$ids = $db->get_column('SELECT id FROM purchase_order_item WHERE stock_object_id=? AND stock_object_classname=? AND amount != delivered', [ $object->id, get_class($object) ]);
 		$purchase_order_items = [];
@@ -107,10 +107,10 @@ class Item {
 	 * Count backorder
 	 *
 	 * @access public
-	 * @param \Skeleton\Package\Stock\Object $object
+	 * @param \Skeleton\Package\Stock\Item $object
 	 * @return int $backorder
 	 */
-	public static function count_backorder(\Skeleton\Package\Stock\Object $object) {
+	public static function count_backorder(\Skeleton\Package\Stock\Item $object) {
 		$purchase_order_items = self::get_backorder($object);
 		$backorder = 0;
 		foreach ($purchase_order_items as $purchase_order_item) {

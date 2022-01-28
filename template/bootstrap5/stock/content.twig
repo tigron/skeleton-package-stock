@@ -1,0 +1,234 @@
+{% extends "@skeleton-package-crud/bootstrap5/content.twig" %}
+
+{% block page_edit %}
+	{% block page_edit_breadcrumb %}
+	<ol class="breadcrumb">
+		<li><a href="/">{% trans "Root" %}</a></li>
+		<li><a href="{{ env.module.get_module_path() }}">{% trans "Stock" %}</a></li>
+		<li class="active">{% trans "Edit stock" %} {{ object.get_name() }}</li>
+	</ol>
+	{% endblock page_edit_breadcrumb %}
+
+	{% if env.sticky_session.updated %}
+		<div class="alert alert-success">
+			{% trans "The stock settings were updated successfully." %}
+		</div>
+	{% endif %}
+
+	<form action="{{ env.module.get_module_path() }}?action=edit&id={{ object.id }}" method="post" class="form-horizontal form-condensed">
+
+	<div class="card mb-3 mt-3">
+		<div class="card-header">{% trans "Stock properties" %}</div>
+		<div class="card-body">
+			<div class="row mb-2">
+				<label class="col-sm-3 col-form-label text-end">{% trans "Supplier" %}</label>
+				<div class="col-sm-9">
+					<select name="product_supplier_id" class="form-control">
+						<option value="-1">{% trans "No supplier" %}</option>
+						{% for supplier in suppliers %}
+							<option value="{{ supplier.id }}" {% if supplier.id == product_supplier.id %}selected{% endif %}>{{ supplier.company }}</option>
+						{% endfor %}
+					</select>
+				</div>
+			</div>
+
+			<div class="row mb-2">
+				<label class="col-sm-3 col-form-label text-end">{% trans "Stock" %}</label>
+				<div class="col-sm-9">
+					<p class="form-control-plaintext">{{ stock }}</p>
+				</div>
+			</div>
+
+			<div class="row mb-2">
+				<label class="col-sm-3 col-form-label text-end">{% trans "Back order" %}</label>
+				<div class="col-sm-9"><p class="form-control-plaintext">{{ count_backorder }}</p></div>
+			</div>
+
+			{% if to_deliver is defined %}
+
+				<div class="row mb-2">
+					<label class="col-sm-3 col-form-label text-end">{% trans "To deliver" %}</label>
+					<div class="col-sm-9"><p class="form-control-plaintext">{{ to_deliver|length }}</p></div>
+				</div>
+
+				<div class="row mb-2">
+					<label class="col-sm-3 col-form-label text-end">{% trans "Virtual stock" %}</label>
+					<div class="col-sm-9"><p class="form-control-plaintext">{{ stock + count_backorder - to_deliver|length }}</p></div>
+				</div>
+
+			{% endif %}
+
+			<div class="row mb-2">
+				<div class="col-sm-9 col-sm-offset-3">
+					<button type="submit" class="btn btn-primary">{% trans "Save" %}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	</form>
+
+	{% include '@skeleton-package-stock/bootstrap5/stock/modal.add.movement.twig' with { id: 'add-movement' } %}
+
+	<div class="card mb-3">
+		<div class="card-header">
+			{% trans "Movements" %}
+			<div class="float-end">
+				<a href="#add-movement" data-bs-toggle="modal">
+					<span class="fas fa-plus"></span>
+					{% trans "Add movement" %}
+				</a>
+			</div>
+		</div>
+		<div class="card-body">
+			{% for item in pager.items %}
+				{% if loop.first %}
+					<table class="table table-striped table-hover table-condensed">
+						<thead>
+							<tr>
+								<th>{% trans "Date" %}</th>
+								<th>{% trans "Movement" %}</th>
+								<th>{% trans "Stock" %}</th>
+								<th>{% trans "Trigger" %}</th>
+								<th>{% trans "Comment" %}</th>
+							</tr>
+						</thead>
+						<tbody>
+				{% endif %}
+
+				{% block pager_moment_table_row %}
+					<tr>
+						<td>{{ item.created|datetime }}</td>
+						<td>
+							{% if item.movement > 0 %}+{% endif %}{{ item.movement }}
+						</td>
+						<td>{{ item.total }}</td>
+						<td>
+							{% block trigger_object %}
+								{% if item.trigger_object_classname == 'Skeleton\\Package\\Delivery\\Shipment' %}
+									<a href="{{ ('/skeleton-package-delivery/delivery?action=edit&id=' ~ item.trigger_object.delivery_id)|reverse_rewrite }}">
+										{% trans "Shipment" %} {{ item.trigger_object_id }}
+									</a>
+								{% elseif item.trigger_object_classname == 'Skeleton\\Package\\Stock\\Purchase\\Order' %}
+									<a href="{{ ('/skeleton-package-stock/purchase_order?action=edit&id=' ~ item.trigger_object_id)|reverse_rewrite }}">
+										{% trans "Purchase Order" %} {{ item.trigger_object_id }}
+									</a>
+								{% else %}
+									{{ item.trigger_object_classname|raw }} {{ item.trigger_object_id }}
+								{% endif %}
+							{% endblock trigger_object %}
+						</td>
+						<td>{{ item.comment }}</td>
+					</tr>
+				{% endblock pager_moment_table_row %}
+
+				{% if loop.last %}
+						</tbody>
+					</table>
+					{{ pager.links|raw }}
+				{% endif %}
+			{% else %}
+				<p>{% trans "No products added yet" %}
+			{% endfor %}
+		</div>
+	</div>
+
+
+	<div class="card mb-3">
+		<div class="card-header">
+			{% trans "Backorder" %}
+		</div>
+		<div class="card-body">
+			{% for purchase_order_item in backorder %}
+				{% if loop.first %}
+					<table class="table table-alternate table-hover">
+					<thead>
+						<tr>
+							<th>{% trans "Purchase order" %}</th>
+							<th>{% trans "Price" %}</th>
+							<th>{% trans "Amount" %}</th>
+							<th>{% trans "Delivered" %}</th>
+							<th>{% trans "Backordered" %}</th>
+						</tr>
+					</thead>
+					<tbody>
+				{% endif %}
+
+				<tr>
+					<td>{% trans "Purchase order" %} {{ purchase_order_item.purchase_order_id }}</td>
+					<td>&euro;{{ purchase_order_item.price }}</td>
+					<td>{{ purchase_order_item.amount }}</td>
+					<td>{{ purchase_order_item.delivered }}</td>
+					<td>{{ purchase_order_item.amount-purchase_order_item.delivered }}</td>
+				</tr>
+
+				{% if loop.last %}
+					<thead>
+						<tr>
+							<th colspan="4" class="text-right">{% trans "Total" %}</th>
+							<th>{{ count_backorder }}</th>
+						</tr>
+					</thead>
+					</tbody>
+					</table>
+				{% endif %}
+			{% else %}
+				<div class="alert alert-info">{% trans "No backorders for this product" %}</div>
+			{% endfor %}
+		</div>
+	</div>
+
+	{% if to_deliver is defined %}
+		<div class="card mb-3">
+			<div class="card-header">
+				{% trans "To deliver" %}
+			</div>
+			<div class="card-body">
+				{% for delivery_id, count in to_deliver_overview %}
+					{% if loop.first %}
+						<table class="table table-alternate table-hover">
+						<thead>
+							<tr>
+								<th>{% trans "Delivery" %}</th>
+								<th>{% trans "To deliver" %}</th>
+							</tr>
+						</thead>
+						<tbody>
+					{% endif %}
+
+					<tr>
+						<td>{{ delivery_id }}</td>
+						<td>{{ count }}</td>
+					</tr>
+
+					{% if loop.last %}
+						<thead>
+							<tr>
+								<th class="text-right">{% trans "Total" %}</th>
+								<th>{{ to_deliver|length }}</th>
+							</tr>
+						</thead>
+						</tbody>
+						</table>
+					{% endif %}
+				{% else %}
+					<div class="alert alert-info">{% trans "No open deliveries for this item" %}</div>
+				{% endfor %}
+			</div>
+		</div>
+	{% endif %}
+
+
+{% endblock page_edit %}
+
+{% block pager_table_head %}
+	<th>{{ pager.create_header('ID'|trans, 'id')|raw }}</th>
+	<th>{% trans "Product" %}</th>
+	<th>{% trans "Stock" %}</th>
+{% endblock pager_table_head %}
+
+{% block pager_table_row %}
+	<td>{{ object.id }}</td>
+	<td>{{ object.get_name() }}</td>
+	<td>{{ object.get_stock() }}</td>
+{% endblock pager_table_row %}

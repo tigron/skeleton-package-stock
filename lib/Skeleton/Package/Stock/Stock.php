@@ -72,11 +72,11 @@ class Stock {
 	 * change
 	 *
 	 * @access public
-	 * @param \Skeleton\Package\Stock\Object $object
+	 * @param \Skeleton\Package\Stock\Item $object
 	 * @param int $amount
 	 * @param object $trigger
 	 */
-	public static function change(\Skeleton\Package\Stock\Object $object, $amount, $trigger, $comment) {
+	public static function change(\Skeleton\Package\Stock\Item $object, $amount, $trigger, $comment) {
 		if ($object->has_stock() === false) {
 			return;
 		}
@@ -102,10 +102,10 @@ class Stock {
 	 * get
 	 *
 	 * @access public
-	 * @param \Skeleton\Package\Stock\Object $object
+	 * @param \Skeleton\Package\Stock\Item $object
 	 * @return int $amount
 	 */
-	public static function get(\Skeleton\Package\Stock\Object $object) {
+	public static function get(\Skeleton\Package\Stock\Item $object) {
 		try {
 			$last_stock = self::get_last_by_object($object);
 			$last_stock = $last_stock->total;
@@ -119,10 +119,10 @@ class Stock {
 	 * Get last by object
 	 *
 	 * @access public
-	 * @param \Skeleton\Package\Stock\Object $object
+	 * @param \Skeleton\Package\Stock\Item $object
 	 * @return \Skeleton\Package\Stock $stock
 	 */
-	public static function get_last_by_object(\Skeleton\Package\Stock\Object $object) {
+	public static function get_last_by_object(\Skeleton\Package\Stock\Item $object) {
 		$db = Database::get();
 		$id = $db->get_one('SELECT id FROM product_stock WHERE stock_object_classname=? AND stock_object_id=? ORDER BY created DESC LIMIT 1', [ get_class($object), $object->id ]);
 		if ($id === null) {

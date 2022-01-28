@@ -81,13 +81,13 @@ class Order extends Crud {
 		$fields = $classname::get_object_fields();
 		$search_fields = [];
 		foreach ($fields as $field) {
-			if (substr($field['field'], -3) == '_id') {
+			if (substr($field['Field'], -3) == '_id') {
 				continue;
 			}
-			if ($field['field'] == 'id') {
+			if ($field['Field'] == 'id') {
 				continue;
 			}
-			$search_fields[] = $field['field'];
+			$search_fields[] = $field['Field'];
 		}
 
 		if (isset($_POST['search'])) {
@@ -188,7 +188,7 @@ class Order extends Crud {
 	 * @param Product $product
 	 * @param int $count
 	 */
-	public function add_to_basket(\Skeleton\Package\Stock\Object $object, $count, $price) {
+	public function add_to_basket(\Skeleton\Package\Stock\Item $object, $count, $price) {
 
 		if (!isset($_SESSION['skeleton-package-stock']['po']['items'])) {
 			$_SESSION['skeleton-package-stock']['po']['items'] = [];
@@ -223,7 +223,7 @@ class Order extends Crud {
 	 * @access public
 	 */
 	public function display_load_basket() {
-		$this->template = "@skeleton-package-stock\purchase_order\basket.twig";
+		$this->template = "@skeleton-package-stock\bootstrap3\purchase_order\basket.twig";
 	}
 
 	/**

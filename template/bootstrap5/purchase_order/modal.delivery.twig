@@ -1,0 +1,119 @@
+{% extends "_default/modal.base.twig" %}
+
+{% block header %}{% trans "Add a new delivery" %}{% endblock header %}
+
+{% block body %}
+
+<div class="alert alert-info">
+	<div>
+	{% trans "Please indicate the products that are delivered." %} {% trans "The stock will automatically be increased based on the delivery." %}
+	{% trans "Press 'Complete delivery' if the purchase order is delivered completely." %}
+	</div>
+
+	<hr />
+	<div>
+		<button class="btn btn-primary" onclick="complete_delivery();">{% trans "Complete delivery" %}</button>
+	</div>
+</div>
+
+<form action="{{ env.module.get_module_path() }}?action=add_delivery&id={{ object.id }}" method="post" class="form-horizontal form-condensed" id="delivery_form">
+	<table class="table table-alternate table-hover">
+		<thead>
+			<tr>
+				<th>{% trans "Product to ship" %}</th>
+				<th>{% trans "Amount" %}</th>
+				<th>{% trans "Delivered" %}</th>
+				<th>{% trans "Awaiting delivery" %}</th>
+				<th>{% trans "Delivered" %}</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for purchase_order_item in object.get_purchase_order_items() %}
+		<tr>
+			<td><p class="form-control-static">{{ purchase_order_item.get_stock_object().get_name() }}</p></td>
+			<td><p class="form-control-static">{{ purchase_order_item.amount }}</p></td>
+			<td><p class="form-control-static">{{ purchase_order_item.delivered }}</p></td>
+			{% set to_deliver = purchase_order_item.amount-purchase_order_item.delivered %}
+			<td><p class="form-control-static">{{ to_deliver }}</p></td>
+			<td>
+				{% if to_deliver == 0 %}
+					<em>{% trans "Already delivered" %}</em>
+				{% else %}
+				<input type="number" max="{{ to_deliver }}" min="0" class="form-control has-error" name="delivery[{{ purchase_order_item.id }}]" value="0">
+				{% endif %}
+			</td>
+		</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+
+	<div class="row">
+		<label class="col-sm-2 control-label">{% trans "Comments" %}</label>
+		<div class="col-sm-10">
+			<textarea name="purchase_order[comments]" class="form-control">{{ purchase_order.comments }}</textarea>
+		</div>
+	</div>
+</form>
+
+<script type="text/javascript">
+	function complete_delivery() {
+		$('input[type=number]').each(function() {
+			$(this).val( $(this).attr('max') );
+		});
+	}
+
+	$('#delivery_form').on('submit', function(event) {
+		$('.has-error').removeClass('has-error');
+		event.preventDefault();
+		$('input[type=number]').each(function() {
+			nan = false
+			if (parseInt( $(this).val() ) != $(this).val()) {
+				nan = true
+			}
+			min = parseInt( $(this).attr('min'));
+			max = parseInt( $(this).attr('max'));
+			val = parseInt( $(this).val() );
+
+			console.log('max ' + max);
+			console.log('min ' + min);
+			console.log('val ' + val);
+
+			if (nan) {
+				$(this).parents('td').addClass('has-error');
+				return;
+			}
+
+			if (val < min) {
+				$(this).parents('td').addClass('has-error');
+				return;
+			}
+
+			if (val > max) {
+				$(this).parents('td').addClass('has-error');
+				return;
+			}
+		});
+
+		if ($('.has-error').length == 0) {
+			$('#delivery_form').unbind('submit').submit();
+		}
+	});
+
+	function validate() {
+		value = $("input[name='stock_movement[movement]']").val();
+		min = $("input[name='stock_movement[movement]']").attr('min');
+		if (value < min) {
+			$("input[name='stock_movement[movement]']").parents('.form-group').addClass('has-error');
+		} else {
+			$("input[name='stock_movement[movement]']").parents('.modal-content').find('form').submit();
+		}
+	}
+</script>
+
+
+{% endblock body %}
+
+{% block footer %}
+	<button type="submit" class="btn btn-primary" onclick="$(this).parents('.modal-content').find('form').submit();">{% trans "Save" %}</button>
+	<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+{% endblock footer %}

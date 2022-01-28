@@ -31,7 +31,7 @@ class Stock extends Crud {
 	 * @access public
 	 * @var string $template
 	 */
-	public $template = '@skeleton-package-stock\content.twig';
+	public $template = '@skeleton-package-stock/bootstrap5/stock/content.twig';
 
 	/**
 	 * Edit stock for product
@@ -40,6 +40,7 @@ class Stock extends Crud {
 	 */
 	public function display_edit() {
 		parent::display_edit();
+
 		$template = Template::get();
 
 		$classname = \Skeleton\Package\Stock\Config::$object_stock_interface;
@@ -89,7 +90,6 @@ class Stock extends Crud {
 			$template->assign('to_deliver_overview', $to_deliver_overview);
 			$template->assign('to_deliver', $to_deliver);
 		}
-
 
 		$pager = new Pager('\Skeleton\Package\Stock\Stock');
 		$pager->add_sort_permission('created');

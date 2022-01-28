@@ -115,42 +115,47 @@ class Supplier {
 	}
 
 	/**
-	 * Set for Skeleton\Package\Stock\Object
+	 * Set for Skeleton\Package\Stock\Item
 	 *
 	 * @access public
-	 * @param Skeleton\Package\Stock\Object $object
+	 * @param Skeleton\Package\Stock\Item $object
 	 */
-	public static function set_for_object(\Skeleton\Package\Stock\Object $object, Supplier $supplier = null) {
-		\Skeleton\Package\Stock\Object\Supplier::set_for_object($object, $supplier);
+	public static function set_for_object(\Skeleton\Package\Stock\Item $object, Supplier $supplier = null) {
+		\Skeleton\Package\Stock\Item\Supplier::set_for_object($object, $supplier);
 	}
 
 	/**
 	 * Unset for object
 	 *
 	 * @access public
-	 * @param Skeleton\Package\Stock\Object $object
+	 * @param Skeleton\Package\Stock\Item $object
 	 */
-	public static function unset_for_object(\Skeleton\Package\Stock\Object $object) {
+	public static function unset_for_object(\Skeleton\Package\Stock\Item $object) {
 		try {
-			$object_supplier = \Skeleton\Package\Stock\Object\Supplier::get_by_object($object);
+			$object_supplier = \Skeleton\Package\Stock\Item\Supplier::get_by_object($object);
 			$object_supplier->delete();
 		} catch (\Exception $e) {
 		}
 	}
 
 	/**
-	 * Get for Skeleton\Package\Stock\Object
+	 * Get for Skeleton\Package\Stock\Item
 	 *
 	 * @access public
-	 * @param Skeleton\Package\Stock\Object $object
+	 * @param Skeleton\Package\Stock\Item $object
 	 * @return Skeleton\Package\Stock\Supplier $supplier
 	 */
-	public static function get_for_object(\Skeleton\Package\Stock\Object $object) {
+	public static function get_for_object(\Skeleton\Package\Stock\Item $object) {
 		try {
-			$object_supplier = \Skeleton\Package\Stock\Object\Supplier::get_by_object($object);
+			$object_supplier = \Skeleton\Package\Stock\Item\Supplier::get_by_object($object);
 			return self::get_by_id($object_supplier->supplier_id);
 		} catch (\Exception $e) {
 			return null;
 		}
+	}
+
+	public static function get_by_id($id) {
+		$class = new self($id);
+		return $class;
 	}
 }

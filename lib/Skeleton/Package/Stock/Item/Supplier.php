@@ -7,7 +7,7 @@
  * @author Gerry Demaret <gerry@tigron.be>
  */
 
-namespace Skeleton\Package\Stock\Object;
+namespace Skeleton\Package\Stock\Item;
 
 use \Skeleton\Database\Database;
 
@@ -25,12 +25,12 @@ class Supplier {
 
 
 	/**
-	 * Set for Skeleton\Package\Stock\Object
+	 * Set for Skeleton\Package\Stock\Item
 	 *
 	 * @access public
-	 * @param Skeleton\Package\Stock\Object $object
+	 * @param Skeleton\Package\Stock\Item $object
 	 */
-	public static function set_for_object(\Skeleton\Package\Stock\Object $object, \Skeleton\Package\Stock\Supplier $supplier = null) {
+	public static function set_for_object(\Skeleton\Package\Stock\Item $object, \Skeleton\Package\Stock\Supplier $supplier = null) {
 		if ($supplier === null) {
 			try {
 				$object_supplier = self::get_by_object($object);
@@ -54,10 +54,10 @@ class Supplier {
 	 * Get for Skeleton\Package\Stock\Object
 	 *
 	 * @access public
-	 * @param Skeleton\Package\Stock\Object $object
+	 * @param Skeleton\Package\Stock\Item $object
 	 * @return Skeleton\Package\Stock\Supplier $supplier
 	 */
-	public static function get_by_object(\Skeleton\Package\Stock\Object $object) {
+	public static function get_by_object(\Skeleton\Package\Stock\Item $object) {
 		$db = Database::get();
 		$id = $db->get_one('SELECT id FROM object_supplier WHERE object_classname=? AND object_id=?', [ get_class($object), $object->id ]);
 		if ($id === null) {

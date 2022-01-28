@@ -9,7 +9,7 @@
 
 namespace Skeleton\Package\Stock;
 
-interface Object {
+interface Item {
 
 	/**
 	 * Get name

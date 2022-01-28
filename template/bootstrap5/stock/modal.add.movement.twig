@@ -1,0 +1,55 @@
+{% extends "_default/modal.base.twig" %}
+
+{% block header %}{% trans "Modify stock" %}{% endblock header %}
+
+{% block body %}
+	<div class="alert alert-info">{% trans "Enter your stock movement." %}</div>
+	<form class="form-horizontal" method="post" action="{{ env.module.get_module_path() }}?action=add_movement&id={{ object.id }}" id="frm_movement">
+		<div class="row mb-2">
+			<label class="col-sm-3 col-form-label">{% trans "Current stock" %}</label>
+			<div class="col-sm-9"><p class="form-control-plaintext">{{ stock }}</p></div>
+		</div>
+
+		<div class="row mb-2">
+			<label class="col-form-label col-sm-3" for="name">{% trans "Movement" %}</label>
+			<div class="col-sm-9">
+				<input type="number" min="{{ object.get_stock()*-1 }}" value="0" name="stock_movement[movement]" id="name" class="form-control" onchange="new_stock(this);" />
+			</div>
+		</div>
+
+		<div class="row mb-2">
+			<label class="col-sm-3 col-form-label">{% trans "New stock" %}</label>
+			<div class="col-sm-9"><p class="form-control-plaintext" id="new_stock">{{ stock }}</p></div>
+		</div>
+
+		<div class="row">
+			<label class="col-sm-3 col-form-label">{% trans "Comment" %}</label>
+			<div class="col-sm-9"><input type="text" class="form-control" name="stock_movement[comment]" /></div>
+		</div>
+	</form>
+
+	<script type="text/javascript">
+		function new_stock(element) {
+			$('#new_stock').html( parseInt($(element).val()) + {{ object.get_stock() }})
+		}
+
+		$('#frm_movement').on('submit', function(event) {
+			event.preventDefault();
+			value = parseInt($("input[name='stock_movement[movement]']").val());
+			min = parseInt($("input[name='stock_movement[movement]']").attr('min'));
+
+			if (value < min) {
+				$("input[name='stock_movement[movement]']").parents('.row').addClass('has-error');
+			} else {
+				$('#frm_movement').unbind('submit').submit();
+			}
+		});
+	</script>
+
+
+{% endblock body %}
+
+{% block footer %}
+	<button type="submit" class="btn btn-primary" onclick="$(this).parents('.modal-content').find('form').submit();">{% trans "Save" %}</button>
+	<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{% trans "Cancel" %}</button>
+{% endblock footer %}

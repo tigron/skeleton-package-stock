@@ -1,0 +1,135 @@
+{% if action == 'create_step2' %}
+<div class="row">
+	<div class="col-sm-8">
+		<form class="form-horizontal" method="post" action="{{ env.module.get_module_path }}?action=create_step2">
+		<input type="hidden" name="supplier_id" value="{{ supplier.id }}" />
+		<div class="card mb-2">
+			<div class="card-header">{% trans "Search Products" %}</div>
+			<div class="card-body">
+				<div class="row mb-2">
+					<label class="col-sm-2 control-label">{% trans "Search" %}</label>
+					<div class="col-sm-9"><input type="text" class="form-control" name="search" value="{{ pager.get_search() }}"></div>
+				</div>
+
+				<div class="row mb-2">
+					<div class="col-sm-9 offset-sm-2">
+						<button type="submit" class="btn btn-primary">{% trans "Search" %}</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		</form>
+
+		<div class="card form-horizontal">
+			<div class="card-header">
+				{{ pager.item_count }} {% if pager.item_count == 1 %}{% trans "result" %}{% else %}{% trans "results" %}{% endif %}
+			</div>
+			<div class="card-body">
+				{% if pager.items|length > 0 %}
+					<table class="table table-striped table-hover table-condensed">
+					<thead>
+						<tr>
+							<th>{{ pager.create_header('Name'|trans, name)|raw }}</th>
+							<th width="20%">{% trans "Purchase price" %}</th>
+							<th width="10%">{% trans "Amount" %}</th>
+							<th width="10%">{% trans "Total" %}</th>
+							<th width="10%"></th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for object in pager.items %}
+							<tr data-id="{{ object.id }}" data-classname="{{ object|get_class }}">
+								<td><p class="form-control-static">{{ object.get_name() }}</p></td>
+								<td>
+									<div class="input-group">
+										<div class="input-group-text">&euro;</div>
+										<input type="text" class="form-control price" style="width: 70px;" name="purchase_price" value="{{ object.get_purchase_price() }}" onchange="update_row_price(this);" />
+									</div>
+								</td>
+								<td>
+									<input type="text" class="form-control count" style="width: 70px;" name="amount" value="0" onchange="update_row_price(this);" />
+								</td>
+								<td>
+									<p class="form-control-static">
+										<span class="row_total">&euro;0</span>
+									</p>
+								</td>
+								<td>
+									<p class="form-control-static">
+										<a href="#" onclick="add_to_basket(this);">
+											<i class="fas fa-plus"></i>
+										</a>
+									</p>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+					</table>
+					{{ pager.links|raw }}
+				{% else %}
+					<div class="alert alert-info">{% trans "There are no objects that match your search criteria." %}</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+
+	<div class="col-sm-4" id="basket">
+
+	</div>
+</div>
+
+	<script type="text/javascript">
+		function update_row_price(element) {
+			price = $(element).parents('tr').find('.price').val();
+			count = $(element).parents('tr').find('.count').val();
+			$(element).parents('tr').find('.row_total').html( '&euro;' + price*count )
+			$(element).parents('tr').find('.row_total').attr('price', price*count );
+			//update_grand_total();
+		}
+
+		function add_to_basket(element) {
+			object_classname = $(element).parents('tr').data('classname');
+			object_id = $(element).parents('tr').data('id');
+			price = $(element).parents('tr').find('.price').val();
+			count = $(element).parents('tr').find('.count').val();
+
+			data = {
+				object_classname: object_classname,
+				object_id: object_id,
+				price: price,
+				count: count
+			};
+
+			$.post( '{{ env.module.get_module_path }}?action=add_to_basket', data, function() {
+				load_basket();
+			});
+		}
+
+		function remove_from_basket(element) {
+			object_classname = $(element).parents('tr').data('classname');
+			object_id = $(element).parents('tr').data('id');
+			price = $(element).parents('tr').find('.price').val();
+			count = $(element).parents('tr').find('.count').val();
+
+			data = {
+				object_classname: object_classname,
+				object_id: object_id,
+				price: price,
+				count: count
+			};
+
+			$.post( '{{ env.module.get_module_path }}?action=remove_from_basket', data, function() {
+				load_basket();
+			});
+		}
+
+		function load_basket() {
+			$("#basket").load('{{ env.module.get_module_path() }}?action=load_basket');
+		}
+		load_basket();
+	</script>
+{% else %}
+
+
+
+{% endif %}

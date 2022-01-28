@@ -1,4 +1,4 @@
-{% extends "@skeleton-package-crud/content.twig" %}
+{% extends "@skeleton-package-crud/bootstrap3/content.twig" %}
 
 {% block page_edit %}
 	{% block page_edit_breadcrumb %}
@@ -68,7 +68,7 @@
 
 	</form>
 
-	{% include '@skeleton-package-stock/stock/modal.add.movement.twig' with { id: 'add-movement' } %}
+	{% include '@skeleton-package-stock/bootstrap3/stock/modal.add.movement.twig' with { id: 'add-movement' } %}
 
 	<div class="panel panel-default">
 		<div class="panel-heading">
